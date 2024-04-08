@@ -1,0 +1,399 @@
+2 Contracts
+    - Counter to get familiar with the NCTL
+    - Message Contract to go more into the Contract development
+
+The differences between the NCTL / Testnet
+    https://iancoleman.io/bip39/
+
+    // mnemonic 
+        var mnemonic = "useful gold corn wild sor ... "
+    
+    var derivationString = "m/44'/506'/0'/0/0"
+
+The CLI
+    casper-client help
+    casper-client put-deploy --help
+
+Prerequisites:
+https://docs.casper.network/developers/writing-onchain-code/getting-started/
+
+// start the NCTL  
+nctl-assets-setup && nctl-start
+
+// Check if NCTL is running
+casper-client get-state-root-hash --node-address http://localhost:11101
+
+Response:
+{
+  "id": -3138637618341144165,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "state_root_hash": "e332b9a0528efd0edece4e7435949d4e58e4ae633d594531f8b94d0a303a7e0f"
+  }
+}
+
+// Query the global state of the network
+casper-client query-global-state \
+    --node-address http://localhost:11101 \
+    --state-root-hash e332b9a0528efd0edece4e7435949d4e58e4ae633d594531f8b94d0a303a7e0f \
+    --key 01996a529da3b43bd5e49d99147bc8e5b8f0cfe479bfa25b12d0154c3efd706851
+
+
+//******************************************************
+// First example - Counter 
+//******************************************************
+
+011e970f773e4d9ea4c44bab7fe7d27190e6bdd1d9374bb7735bad7bc22405db43
+
+// get the contract from the github
+git clone https://github.com/casper-ecosystem/counter
+
+// deploy the contract on the nctl
+casper-client put-deploy \
+    --node-address http://localhost:11101 \
+    --chain-name casper-net-1 \
+    --secret-key /Users/karolmarter/nctl-test/casper-node/utils/nctl/assets/net-1/faucet/secret_key.pem \
+    --payment-amount 23000000000 \
+    --session-path ./contract-v1/target/wasm32-unknown-unknown/release/counter-v1.wasm
+
+// Result:
+{
+  "id": -2997893761787645025,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "deploy_hash": "6d8dfe4c4ed6d31eb6fcb148bf9905b7467f538e25250fdc73e049f5d0a335d3"
+  }
+}
+
+// check if the deploy was successful
+casper-client get-deploy \
+    --node-address http://localhost:11101 6d8dfe4c4ed6d31eb6fcb148bf9905b7467f538e25250fdc73e049f5d0a335d3
+
+// modify the payment and run again
+casper-client put-deploy \
+    --node-address http://localhost:11101 \
+    --chain-name casper-net-1 \
+    --secret-key /Users/karolmarter/nctl-test/casper-node/utils/nctl/assets/net-1/faucet/secret_key.pem \
+    --payment-amount 40000000000 \
+    --session-path ./contract-v1/target/wasm32-unknown-unknown/release/counter-v1.wasm
+
+// Response:
+{
+  "id": -8957726567681449709,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "deploy_hash": "478d011442f470d175cfb298ed566fe1c1b4c77e33b5a016763b6a011b5a93e1"
+  }
+}
+
+// check if the deploy was successful
+casper-client get-deploy \
+    --node-address http://localhost:11101 478d011442f470d175cfb298ed566fe1c1b4c77e33b5a016763b6a011b5a93e1
+
+// Get the new state root hash
+casper-client get-state-root-hash --node-address http://localhost:11101
+
+{
+  "id": -1578247982114019306,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "state_root_hash": "0aa397cafd54f8301f1307e7b3604ac8940c726244047145e37f8d31f1a2332d"
+  }
+}
+
+// Get the network state
+casper-client query-global-state \
+    --node-address http://localhost:11101 \
+    --state-root-hash 0aa397cafd54f8301f1307e7b3604ac8940c726244047145e37f8d31f1a2332d \
+    --key 011e970f773e4d9ea4c44bab7fe7d27190e6bdd1d9374bb7735bad7bc22405db43
+
+// Query the counter contract
+casper-client query-global-state --node-address http://localhost:11101 \
+    --state-root-hash 0aa397cafd54f8301f1307e7b3604ac8940c726244047145e37f8d31f1a2332d \
+    --key 011e970f773e4d9ea4c44bab7fe7d27190e6bdd1d9374bb7735bad7bc22405db43 -q "counter"
+
+casper-client query-global-state --node-address http://localhost:11101 \
+    --state-root-hash 0aa397cafd54f8301f1307e7b3604ac8940c726244047145e37f8d31f1a2332d \
+    --key 011e970f773e4d9ea4c44bab7fe7d27190e6bdd1d9374bb7735bad7bc22405db43 -q "counter/count"
+
+// increment the counter
+casper-client put-deploy \
+    --node-address http://localhost:11101 \
+    --chain-name casper-net-1 \
+    --secret-key /Users/karolmarter/nctl-test/casper-node/utils/nctl/assets/net-1/faucet/secret_key.pem \
+    --payment-amount 40000000000 \
+    --session-name "counter" \
+    --session-entry-point "counter_inc"
+
+{
+  "id": 3964995640272307757,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "deploy_hash": "fb3890a20282d2b874ea8e154b21beb0d38010e813d5cc6667105c1dc6d39880"
+  }
+}
+
+// get state root hash
+casper-client get-state-root-hash --node-address http://localhost:11101
+
+{
+  "id": 7492741713372171659,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "state_root_hash": "a7b8ef110f632cc9c43309324b42a819de8a3ce2d19daa99a8b40bd7597ce7a2"
+  }
+}
+
+// checking the count variable again
+casper-client query-global-state --node-address http://localhost:11101 \
+    --state-root-hash a7b8ef110f632cc9c43309324b42a819de8a3ce2d19daa99a8b40bd7597ce7a2 \
+    --key 011e970f773e4d9ea4c44bab7fe7d27190e6bdd1d9374bb7735bad7bc22405db43 -q "counter/count"
+
+
+// increment the counter
+casper-client put-deploy \
+    --node-address http://localhost:11101 \
+    --chain-name casper-net-1 \
+    --secret-key /Users/karolmarter/nctl-test/casper-node/utils/nctl/assets/net-1/faucet/secret_key.pem \
+    --payment-amount 40000000000 \
+    --session-name "counter" \
+    --session-entry-point "counter_inc"
+
+{
+  "id": -7795637665823097126,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "deploy_hash": "e9050562f372be49cd7a5e59bbfb4b17740111a4ceff2a0f6ce38887f3de9432"
+  }
+}
+
+// get state root hash
+casper-client get-state-root-hash --node-address http://localhost:11101
+
+{
+  "id": -4387935960952223039,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "state_root_hash": "bc9a40a5ac80b39313e9919a5d55f74c1146b278684d2f05e576b684a1f729dd"
+  }
+}
+
+// checking the count variable again
+casper-client query-global-state --node-address http://localhost:11101 \
+    --state-root-hash bc9a40a5ac80b39313e9919a5d55f74c1146b278684d2f05e576b684a1f729dd \
+    --key 011e970f773e4d9ea4c44bab7fe7d27190e6bdd1d9374bb7735bad7bc22405db43 -q "counter/count"
+
+// increment the counter
+casper-client put-deploy \
+    --node-address http://localhost:11101 \
+    --chain-name casper-net-1 \
+    --secret-key /Users/karolmarter/nctl-test/casper-node/utils/nctl/assets/net-1/faucet/secret_key.pem \
+    --payment-amount 40000000000 \
+    --session-name "counter" \
+    --session-entry-point "counter_inc"
+
+{
+  "id": -7683504932192574290,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "deploy_hash": "829bba704b389235ae8e54170d4420815f51c212bf197d74e9f72718d2bd5e87"
+  }
+}
+
+// get state root hash
+casper-client get-state-root-hash --node-address http://localhost:11101
+
+{
+  "id": 8772597616064896288,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "state_root_hash": "117e3be7b0ba1a15356c9016929518660a6d1f6be7377fb7f2994a8c6d1977ae"
+  }
+}
+
+// checking the count variable again
+casper-client query-global-state --node-address http://localhost:11101 \
+    --state-root-hash 117e3be7b0ba1a15356c9016929518660a6d1f6be7377fb7f2994a8c6d1977ae \
+    --key 011e970f773e4d9ea4c44bab7fe7d27190e6bdd1d9374bb7735bad7bc22405db43 -q "counter/count"
+
+//*******************************************
+// Example 2 - The two contracts calling each other
+//*******************************************
+https://docs.casper.network/developers/prerequisites/
+https://docs.casper.network/developers/writing-onchain-code/getting-started/
+https://docs.casper.network/developers/writing-onchain-code/simple-contract/
+
+// create contract
+
+cargo casper cross-contract
+
+// deploy to the network 
+casper-client put-deploy \
+    --node-address http://localhost:11101 \
+    --chain-name casper-net-1 \
+    --secret-key /Users/karolmarter/nctl-test/casper-node/utils/nctl/assets/net-1/faucet/secret_key.pem \
+    --payment-amount 40000000000 \
+    --session-path ./contract/target/wasm32-unknown-unknown/release/contract.wasm \
+    --session-arg "message:string='hello world'"
+
+// Result 
+{
+  "id": -1192635515257555062,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "deploy_hash": "6be642cb3ea8af7fc38cbc0589a8973f210c3f2c03d5eef6c521b5c2cce993b5"
+  }
+}
+
+// Lets check if it was deployed succesfully 
+casper-client get-deploy \
+    --node-address http://localhost:11101 6be642cb3ea8af7fc38cbc0589a8973f210c3f2c03d5eef6c521b5c2cce993b5
+
+// create the 2nd contract
+casper-client put-deploy \
+    --node-address http://localhost:11101 \
+    --chain-name casper-net-1 \
+    --secret-key /Users/karolmarter/nctl-test/casper-node/utils/nctl/assets/net-1/faucet/secret_key.pem \
+    --payment-amount 40000000000 \
+    --session-path ./contract/target/wasm32-unknown-unknown/release/contract.wasm
+
+// Result 
+{
+  "id": -8666150547707308763,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "deploy_hash": "4c4e5b0b5180016dcb80145bf5a9daa95ef04e755327db0be916da554b5c5d2e"
+  }
+}
+
+// check if deploy was successful
+casper-client get-deploy \
+    --node-address http://localhost:11101 4c4e5b0b5180016dcb80145bf5a9daa95ef04e755327db0be916da554b5c5d2e
+
+// Get the state root hash of the network
+casper-client get-state-root-hash --node-address http://localhost:11101
+
+// Result:
+{
+  "id": 6116717066904497920,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "state_root_hash": "c983bb8b8e50f2a6f44860500ac0fd22b8a0c240fc9f8a3b11915e52f0e53d39"
+  }
+}
+
+// Get the network state
+casper-client query-global-state \
+    --node-address http://localhost:11101 \
+    --state-root-hash c983bb8b8e50f2a6f44860500ac0fd22b8a0c240fc9f8a3b11915e52f0e53d39 \
+    --key 011e970f773e4d9ea4c44bab7fe7d27190e6bdd1d9374bb7735bad7bc22405db43
+
+// Query the contract to see the state 
+casper-client query-global-state \
+  --node-address http://localhost:11101 \
+  --state-root-hash c983bb8b8e50f2a6f44860500ac0fd22b8a0c240fc9f8a3b11915e52f0e53d39 \
+  --key hash-843faca8330dd448016e60ef97d05bb54675c01dd9cd9169bff8eb8b956b5c4c
+
+// Query the message from the contract
+casper-client query-global-state \
+  --node-address http://localhost:11101 \
+  --state-root-hash c983bb8b8e50f2a6f44860500ac0fd22b8a0c240fc9f8a3b11915e52f0e53d39 \
+  --key hash-843faca8330dd448016e60ef97d05bb54675c01dd9cd9169bff8eb8b956b5c4c -q "message"
+
+// Response:
+{
+  "id": 6736820563652926992,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "block_header": null,
+    "merkle_proof": "[6122 hex chars]",
+    "stored_value": {
+      "CLValue": {
+        "bytes": "0b00000068656c6c6f20776f726c64",
+        "cl_type": "String",
+        "parsed": "hello world"
+      }
+    }
+  }
+}
+
+// call the hello world contract from the cross contract 2
+// session-hash -> is actually a contract -> cross contract 2
+// argument -> new_message
+// argument -> hash of the first contract
+
+casper-client put-deploy \
+    --node-address http://localhost:11101 \
+    --chain-name casper-net-1 \
+    --secret-key /Users/karolmarter/nctl-test/casper-node/utils/nctl/assets/net-1/faucet/secret_key.pem \
+    --payment-amount 40000000000 \
+    --session-hash hash-628d687ef1a3dab42d69e951370d4205e57e7d7e03d429d345227d44f9664417 \
+    --session-entry-point "call_contract_2" \
+    --session-arg "new_message:string='Hello new message!'" \
+    --session-arg "hello_world_contract:Key='hash-843faca8330dd448016e60ef97d05bb54675c01dd9cd9169bff8eb8b956b5c4c'"
+
+// Result:
+{
+  "id": -5107037585627512965,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "deploy_hash": "cbf270333b88a26dca79c979b95592a28963e042cac6726896ab1f7ffeb7cb09"
+  }
+}
+
+// Lets check if it was deployed succesfully 
+casper-client get-deploy \
+    --node-address http://localhost:11101 cbf270333b88a26dca79c979b95592a28963e042cac6726896ab1f7ffeb7cb09
+
+/ Get the state root hash of the network
+casper-client get-state-root-hash --node-address http://localhost:11101
+
+// Result:
+{
+  "id": -5329907021817019398,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",
+    "state_root_hash": "e4064bc394926b15f4250aeb79124b63de8166faca04569948fd5bcf1822042e"
+  }
+}
+
+// get the value of the new message
+
+casper-client query-global-state \
+  --node-address http://localhost:11101 \
+  --state-root-hash e4064bc394926b15f4250aeb79124b63de8166faca04569948fd5bcf1822042e \
+  --key hash-843faca8330dd448016e60ef97d05bb54675c01dd9cd9169bff8eb8b956b5c4c -q "message"
+
+// Result
+{
+  "id": 2545831125470266156,
+  "jsonrpc": "2.0",
+  "result": {
+    "api_version": "1.0.0",                     
+    "block_header": null,
+    "merkle_proof": "[6136 hex chars]",
+    "stored_value": {
+      "CLValue": {
+        "bytes": "1200000048656c6c6f206e6577206d65737361676521",
+        "cl_type": "String",
+        "parsed": "Hello new message!"
+      }
+    }
+  }
+}

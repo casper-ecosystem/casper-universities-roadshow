@@ -1,0 +1,1 @@
+/Users/karolmarter/Desktop/Amrita_Projects/casper-road-show/cross-contract-2/contract/target/wasm32-unknown-unknown/release/contract.wasm: /Users/karolmarter/Desktop/Amrita_Projects/casper-road-show/cross-contract-2/contract/src/main.rs

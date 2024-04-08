@@ -1,0 +1,10 @@
+/Users/karolmarter/Desktop/Amrita_Projects/casper-road-show/cross-contract-2/contract/target/release/deps/version_check-3f38fb89ac50d5b5.rmeta: /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/lib.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/version.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/channel.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/date.rs
+
+/Users/karolmarter/Desktop/Amrita_Projects/casper-road-show/cross-contract-2/contract/target/release/deps/libversion_check-3f38fb89ac50d5b5.rlib: /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/lib.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/version.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/channel.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/date.rs
+
+/Users/karolmarter/Desktop/Amrita_Projects/casper-road-show/cross-contract-2/contract/target/release/deps/version_check-3f38fb89ac50d5b5.d: /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/lib.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/version.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/channel.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/date.rs
+
+/Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/lib.rs:
+/Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/version.rs:
+/Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/channel.rs:
+/Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/version_check-0.9.4/src/date.rs:

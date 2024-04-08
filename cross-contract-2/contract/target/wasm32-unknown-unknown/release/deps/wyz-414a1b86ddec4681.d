@@ -1,0 +1,11 @@
+/Users/karolmarter/Desktop/Amrita_Projects/casper-road-show/cross-contract-2/contract/target/wasm32-unknown-unknown/release/deps/wyz-414a1b86ddec4681.rmeta: /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/lib.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/conv.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/fmt.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/pipe.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/tap.rs
+
+/Users/karolmarter/Desktop/Amrita_Projects/casper-road-show/cross-contract-2/contract/target/wasm32-unknown-unknown/release/deps/libwyz-414a1b86ddec4681.rlib: /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/lib.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/conv.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/fmt.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/pipe.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/tap.rs
+
+/Users/karolmarter/Desktop/Amrita_Projects/casper-road-show/cross-contract-2/contract/target/wasm32-unknown-unknown/release/deps/wyz-414a1b86ddec4681.d: /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/lib.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/conv.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/fmt.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/pipe.rs /Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/tap.rs
+
+/Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/lib.rs:
+/Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/conv.rs:
+/Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/fmt.rs:
+/Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/pipe.rs:
+/Users/karolmarter/.cargo/registry/src/github.com-1ecc6299db9ec823/wyz-0.2.0/src/tap.rs:
