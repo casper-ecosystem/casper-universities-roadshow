@@ -1,0 +1,311 @@
+
+Introduction to programming dApps 
+
+What is a dApp? 
+    -   it is an application that interacts with Data on the Blockchain.
+    -   depending on the type of application it can also interact with classical databases. 
+        Remeber blockchain is not a DB so it has to be developed differently.
+
+Interaction between a dApp and a Blockchain
+    - the application has to be able to send deploys to the network
+    - sending the deploy to the node will result in that node to gossip the deploy to other nodes
+    - changes to the global state occur after successful execution of the deploy
+
+
+Prerequisites
+    - Set up the Development Environment
+        - Smart Contract Development
+        - Backend Development
+        - Frontend Development
+
+SDKs
+    - JavaScript / Typescript
+    - .NET SDK
+    - Go SDK
+    - Python SDK
+
+Technology Stack
+    - Frontend - React / JavaScript -> Evolution of the Wallet technology
+        - Casper Signer - obsolete
+        - Casper Wallet 
+        - Casper Click 
+    - Backend 
+        - Different approach when designing a WebDapp or a game or a mobile application
+    - Blockchain
+        - All the interactions will be in the form of deploys to the network
+        - The Data is usually custom and requires an in-depth design where the values are stored (for example Dictionaries)
+
+Frontend development
+    -   There are several possibilities to interact with the Casper Blockchain
+    -   The way has been changing the last months, the newest one is through Casper Click
+    -   There exist tutorials for interacting directly through casper wallet, it is still a viable method, 
+        but Casper Click has much more functionalities out of the box
+    
+Casper Click
+    - Wagmi / Rainbow from ETH
+    - CSPR.Click is a unified SDK that simplifies Web3 application onboarding by offering a seamless integration with wallets
+    - Any application using CSPR.Click is leveraging the Core JS SDK
+    - you can leverage the UI SDK from CSPR.Click to provide a consistent UI for your apps 
+    - UI SDK is a React Library 
+
+Creating a Frontend: 
+    - First we will create a casper click app from a template 
+    - Prerequisites -> Casper Wallet set up and filled with Test Tokens from the Faucet
+
+// Create the app     
+npx create-react-app my-casper-app --template @make-software/csprclick-react
+
+// Go into the Folder and start the app
+cd my-casper-app
+npm start
+
+Let us see how we can connect our site through click to the wallet.
+
+The setup of the CSPR.Click is in the index.tsx file
+
+const clickOptions: CsprClickInitOptions = {
+	appName: 'CSPR.app',
+	contentMode: CONTENT_MODE.IFRAME,
+	providers: ['casper-wallet', 'ledger', 'torus-wallet', 'casperdash', 'metamask-snap', 'casper-signer'],
+	appId: 'csprclick-template',
+};
+
+Those Options are passed through the ClickProvider into the application and are available from the application
+
+<ClickProvider options={clickOptions}>
+  <App/>
+</ClickProvider>
+
+
+// Using useClickRef()
+
+    - signIn() -> Shows the connection options to start a user's session.
+    - signOut() -> Closes your user's session.
+    - getActiveAccount() -> Returns the active account data.
+    - getActivePublicKey() -> Returns the connected public key.
+    - switchAccount() -> Displays to the user a modal dialog to switch to another account when the user session is open.
+    - sign() -> Triggers the process to request the user the signature of a transaction.
+    - send() -> Similar to sign(), but when the transaction is signed, sends it to a Casper node for its processing.
+    - signMessage() -> Triggers the process to request the user the signature of a message.
+
+
+
+// Create the create-react-app with typescript
+npx create-react-app click-frontend-react --template @make-software/csprclick-react
+
+// let us start the application with npm start
+npm start
+
+// Deploying the contracts to the testnet
+
+// initial deploy
+casper-client put-deploy \
+    --node-address http://76.91.193.251:7777 \
+    --chain-name casper-test \
+    --secret-key ./CasperKeys/private.pem \
+    --payment-amount 40000000000 \
+    --session-path ./contract/target/wasm32-unknown-unknown/release/contract.wasm \
+    --session-arg "message:string='hello world'"
+
+// getting the value from the deploy
+casper-client get-deploy \
+    --node-address http://76.91.193.251:7777 164ed740abd59857cfdba4ba409f232ee92a8261179e0e81efed604c5582287d
+
+// putting another value through the session arguments
+casper-client put-deploy \
+    --node-address http://76.91.193.251:7777  \
+    --chain-name casper-test \
+    --secret-key ./CasperKeys/private.pem \
+    --payment-amount 23000000000 \
+    --session-name "Amr_contract" \
+    --session-entry-point "update_msg" \
+    --session-arg "message:string='Hello new message!'"
+
+Public key
+0202f20d6319fd24dc5dd3b1c51fa2e1ebfaed608b044f940694eed2ce2f7fb950c7
+Account Hash
+9b75616553a2abeb40ba388287d9fb5bbaaa66b01e96524cb83c75ef22b8673a
+Contract Hash
+hash-ffcec2fd5f61dd116796d7d1cc9c0a3b73f01ae196dad806cb20bbdff25174b0
+
+
+// this lets us to see how the components interact with each other and let us do some
+// simple interactions with the blockchain
+// we can send deploys to the network though the send() method in the hook
+// everything else has to be made through the backend and we will need axios for that
+// we will modify this app to be what we want in the end
+
+// For the interactions the Service typescript class will be created
+// update the value in the contract
+
+export function updateMsg(publicKey: string) {
+
+    const senderPublicKey = CLPublicKey.fromHex(publicKey);
+
+    // construct the contracts object
+    const contract = new Contracts.Contract();
+    // https://testnet.cspr.live/contract/ffcec2fd5f61dd116796d7d1cc9c0a3b73f01ae196dad806cb20bbdff25174b0
+
+    // set the hash of the contract to the object as a string
+    contract.setContractHash('hash-ffcec2fd5f61dd116796d7d1cc9c0a3b73f01ae196dad806cb20bbdff25174b0')
+
+    // construct the deploy for the message
+    const deploy = contract.callEntrypoint(
+        "update_msg",
+        RuntimeArgs.fromMap({
+            "message": CLValueBuilder.string("New Message message?")
+        }),
+        senderPublicKey,
+        "casper-test",
+        "10000000000"
+    )
+    
+    // create the contract deploy and return it to send to the 
+    const jsonDeploy = JSON.stringify(DeployUtil.deployToJson(deploy).deploy)
+    return jsonDeploy;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Setting up the vite ( React ) with Tailwind ( CSS ) - since CSPR.Click uses TypeScript we need to use the react-ts template
+// Create the Project:
+npm create vite@latest casper-click-frontend -- --template react-ts
+
+// go into the project
+cd casper-click-frontend
+
+// we will see a few errors in the configuration, we need to correct Those
+Change the tsconfig.json
+
+/* Bundler mode */
+"moduleResolution": "node",
+"resolveJsonModule": true,
+"isolatedModules": true,
+"noEmit": true,
+"jsx": "react-jsx",
+
+// install tailwind
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+// this will create the Tailwind CSS config file and PostCSS config file
+// the code will show an error in tsconfig.node.json we need to change that
+We change need to substitute the code in tsconfig.json with the following:
+
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "src"
+  ]
+}
+
+// modify the tailwind css config file with the following 
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+// Add the Tailwind directives to the CSS
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// change the import of app to not include .tsx 
+import App from './App'
+
+// Start the build process with npm run dev 
+npm run dev 
+
+// This will launch the app on the default localhost:5173
+
+// Let us set up CSPR.Click for the Tailwind 
+    Since we want to have our own styling and our own logic we don't modify the test app from CSPR.Click 
+    Instead we are going to add the needed components by hand
+
+// Install the dependencies
+npm install --save-dev @make-software/csprclick-ui @make-software/csprclick-core-client @make-software/csprclick-core-types
+
+// let us find main.jsx in the folder and add the appropriate code from CSPR.Click
+// Add the imports:  
+import { CsprClickInitOptions } from '@make-software/csprclick-core-client';
+import { ClickProvider } from '@make-software/csprclick-ui';
+import { CONTENT_MODE } from '@make-software/csprclick-core-types';
+
+// After the import of Click Provider wrap the <App> Component into the provider and pass the Options to it 
+
+// CSPR.Click options 
+const clickOptions: CsprClickInitOptions = {
+	appName: 'CSPR.app',
+	contentMode: CONTENT_MODE.IFRAME,
+	providers: ['casper-wallet', 'ledger', 'torus-wallet', 'casperdash', 'metamask-snap', 'casper-signer'],
+	appId: 'csprclick-template',
+};
+
+// Wrapping the APP with the ClickProvider
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(
+	<React.StrictMode>
+		<ClickProvider options={clickOptions}>
+			<App />
+		</ClickProvider>
+	</React.StrictMode>
+);
+
+// Create the Top Navbar Component, call it Navbar.tsx and provide it with all necessary values
+
+const Navbar = () => { 
+
+
+};
+
+export default Navbar;
+
+Now we need to import some elements to our navbar especially ClickUI
+
+
+// Get the Public Key and the Provider from the connected account 
+
